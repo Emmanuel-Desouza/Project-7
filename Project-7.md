@@ -52,12 +52,36 @@ sudo lvcreate -n lv-logs -L 9G webdata-vg
 ![verifying setup LVs](./images/verify3.png)
 ![verifying setup LVs](./images/verify4.png)
 
+```
+sudo mkfs.xfs -f /dev/webdata-vg/lv-opt
+sudo mkfs.xfs -f /dev/webdata-vg/lv-apps
+sudo mkfs.xfs -f /dev/webdata-vg/lv-logs
+```
+
+![formatting LVs to xfs](./images/xfs.png)
+
 ### Create mount points on /mnt directory for the logical volumes as follow:
 
 - Mount lv-apps on /mnt/apps – To be used by webservers
 - Mount lv-logs on /mnt/logs – To be used by webserver logs
 - Mount lv-opt on /mnt/opt – To be used by Jenkins server in Project 8
 
+```
+sudo mkdir -p /mnt/apps
+sudo mount /dev/webdata-vg/lv-apps /mnt/apps
+```
+
+```
+sudo mkdir -p /mnt/logs
+sudo mount /dev/webdata-vg/lv-logs /mnt/logs
+```
+
+```
+sudo mkdir -p /mnt/opt
+sudo mount /dev/webdata-vg/lv-opt /mnt/opt
+```
+
+![mounting LVs](./images/mkdir-mount.png)
 ### Install NFS server, configure it to start on reboot and make sure it is up and running
 
 ```
