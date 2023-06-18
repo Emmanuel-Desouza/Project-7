@@ -91,6 +91,10 @@ sudo systemctl start nfs-server.service
 sudo systemctl enable nfs-server.service
 sudo systemctl status nfs-server.service
 ```
+
+![mounting LVs](./images/yumupdate.png)
+![mounting LVs](./images/yuminstalutils.png)
+![Configuring NFS to start on reboot](./images/startenablestatus.png)
 ### Export the mounts for webservers’ subnet cidr to connect as clients. For simplicity, I will install all three Web Servers inside the same subnet, but in production set up I would probably want to separate each tier inside its own subnet for higher level of security.
 
 ### To check subnet cidr – I will open EC2 details in AWS web console and locate ‘Networking’ tab and open a Subnet link:
