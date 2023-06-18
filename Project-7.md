@@ -92,8 +92,8 @@ sudo systemctl enable nfs-server.service
 sudo systemctl status nfs-server.service
 ```
 
-![mounting LVs](./images/yumupdate.png)
-![mounting LVs](./images/yuminstalutils.png)
+![NFS Server installation](./images/yumupdate.png)
+![NFS Server Installation](./images/yuminstalutils.png)
 ![Configuring NFS to start on reboot](./images/startenablestatus.png)
 ### Export the mounts for webservers’ subnet cidr to connect as clients. For simplicity, I will install all three Web Servers inside the same subnet, but in production set up I would probably want to separate each tier inside its own subnet for higher level of security.
 
@@ -113,7 +113,8 @@ sudo chmod -R 777 /mnt/opt
 sudo systemctl restart nfs-server.service
 ```
 
-### Configure access to NFS for clients within the same subnet (example of Subnet CIDR – 172.31.32.0/20 ):
+![permissions](./images/chown.png)
+### Configuring access to NFS for clients within the same subnet (example of Subnet CIDR – 172.31.32.0/20 ):
 
 ```
 sudo vi /etc/exports
@@ -126,8 +127,15 @@ Esc + :wq!
 
 sudo exportfs -arv
 ```
-
+![configuring access to NFS](./images/cidrexport.png)
 ### To check which port is used by NFS and open it using Security Groups (add new Inbound Rule)
 `rpcinfo -p | grep nfs`
 
+![Checking Port used by NFS](./images/portnfs.png)
 ## Important note: In order for NFS server to be accessible from the client, I must also open following ports: TCP 111, UDP 111, UDP 2049
+
+![Opening Ports](./images/inboundrules.png)
+## STEP 2 — CONFIGURE THE DATABASE SERVER
+
+
+
