@@ -137,5 +137,51 @@ sudo exportfs -arv
 ![Opening Ports](./images/inboundrules.png)
 ## STEP 2 — CONFIGURE THE DATABASE SERVER
 
+### Install MySQL server
+`sudo apt update`
+![apt update](./images/sudoaptupdate.png)
 
+`sudo apt install mysql-server`
+![Install mysql Server](./images/install-mysqlserver.png)
 
+### To configure MySQL server to allow connections from remote hosts.
+
+`sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf`
+
+![Install mysql Server](./images/mysqld.cnf.png)
+
+![mysql to remote host](./images/0000.png)
+
+### Create a database and name it 'tooling'
+`sudo mysql`
+`CREATE DATABASE tooling;`
+
+![mysql to remote host](./images/createtooling.png)
+
+### Create a database user and name it 'webaccess'
+`CREATE USER 'webaccess'@'172.31.0.0/20' IDENTIFIED BY 'webaccess';`
+![creating user webaccess](./images/createuser.png)
+
+### Grant permission to webaccess user on tooling database to do anything only from the webservers subnet cidr
+`GRANT ALL ON tooling.* TO 'webaccess'@'172.31.0.0/20';`
+`FLUSH PRIVILEGES;`
+`SHOW DATABASES;`
+
+![grant all privileges](./images/grantall.png)
+
+## Step 3 — Prepare the Web Servers
+
+### We need to make sure that our Web Servers can serve the same content from shared storage solutions, in our case – NFS Server and MySQL database.
+### You already know that one DB can be accessed for reads and writes by multiple clients. For storing shared files that our Web Servers will use – we will utilize NFS and mount previously created Logical Volume lv-apps to the folder where Apache stores files to be served to the users (/var/www).
+
+### This approach will make our Web Servers stateless, which means we will be able to add new ones or remove them whenever we need, and the integrity of the data (in the database and on NFS) will be preserved.
+
+### During the next steps we will do following:
+
+### Configure NFS client (this step must be done on all three servers)
+### Deploy a Tooling application to our Web Servers into a shared NFS folder
+### Configure the Web Servers to work with a single MySQL database
+### Launch a new EC2 instance with RHEL 8 Operating System
+### Install NFS client
+`sudo yum install nfs-utils nfs4-acl-tools -y`
+![Installing NFS Client](./images/acl-tools.png)
