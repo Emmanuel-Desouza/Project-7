@@ -181,7 +181,29 @@ sudo exportfs -arv
 ### Configure NFS client (this step must be done on all three servers)
 ### Deploy a Tooling application to our Web Servers into a shared NFS folder
 ### Configure the Web Servers to work with a single MySQL database
-### Launch a new EC2 instance with RHEL 8 Operating System
-### Install NFS client
+### 1. Launch a new EC2 instance with RHEL 8 Operating System
+### 2. Install NFS client
 `sudo yum install nfs-utils nfs4-acl-tools -y`
 ![Installing NFS Client](./images/acl-tools.png)
+
+### 3. Mount /var/www/ and target the NFS server’s export for apps
+
+```
+sudo mkdir /var/www
+sudo mount -t nfs -o rw,nosuid <NFS-Server-Private-IP-Address>:/mnt/apps /var/www
+```
+
+### 4. Verify that NFS was mounted successfully by running df -h.
+
+![creating /var/www directory](./images/sudomkdirvar.png)
+![mounting and verifying mount](./images/mountverify.png)
+
+### To make sure that the changes will persist on Web Server after reboot:
+
+`sudo vi /etc/fstab`
+
+### The following line is added:
+
+`<NFS-Server-Private-IP-Address>:/mnt/apps /var/www nfs defaults 0 0`
+
+### 5. Installing Remi’s repository, Apache and PHP
