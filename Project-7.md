@@ -207,3 +207,88 @@ sudo mount -t nfs -o rw,nosuid <NFS-Server-Private-IP-Address>:/mnt/apps /var/ww
 `<NFS-Server-Private-IP-Address>:/mnt/apps /var/www nfs defaults 0 0`
 
 ### 5. Installing Remi’s repository, Apache and PHP
+
+```
+sudo yum install httpd -y
+
+sudo dnf install dnf-utils https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+
+sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+
+sudo dnf module reset php
+
+sudo dnf module enable php:remi-8.1
+
+sudo dnf install php php-opcache php-gd php-curl php-mysqlnd
+
+sudo systemctl start php-fpm
+
+sudo systemctl enable php-fpm
+
+sudo setsebool -P httpd_execmem 1
+```
+
+![Installing Remi's repository](./images/repo-1.png)
+
+![Installing Remi's repository](./images/repo-2.png)
+![Installing Remi's repository](./images/repo-3.png)
+![Installing PHP](./images/repo-4.png)
+![Installing Dependencies](./images/repo-5.png)
+![Installing Dependencies](./images/repo-6.png)
+![Installing Dependencies](./images/repo-7.png)
+
+### Steps 1 to 5 are repeated for 2 other servers.
+
+### 6. We can verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files – it means NFS is mounted correctly. You can try to create a new file touch test.txt from one server and check if the same file is accessible from other Web Servers.
+
+```
+sudo mkdir -p /var/www/test.txt
+
+sudo ls -larth /var/www/
+```
+
+![teest file in web server](./images/test-1.png)
+![acccessible in another web server](./images/test-2.png)
+
+### 7. Locate the log folder for Apache on the Web Server and mount it to NFS server’s export for logs. Repeat step №4 to make sure the mount point will persist after reboot.
+
+`sudo vi /etc/fstab`
+
+### add:
+`172.31.33.137:/mnt/logs /var/log/httpd`
+
+### 8. Fork the tooling source code from Darey.io Github Account to your Github account.
+![forking Darey's Github account](./images/fork-1.png)
+
+### 9. Deploy the tooling website’s code to the Webserver. Ensure that the html folder from the repository is deployed to /var/www/html
+
+`git clone https://github.com/Emmanuel-Desouza/tooling.git`
+
+![deploy source code to the webserver](./images/tooling.png)
+
+### 10. Update the website’s configuration to connect to the database (in /var/www/html/functions.php file). Apply tooling-db.sql script to my database using this command mysql -h <databse-private-ip> -u <db-username> -p <db-pasword> < tooling-db.sql
+
+`sudo mysql -h 172.31.33.155 -u webaccess -p -D tooling < tooling-db.sql`
+
+![apply tooling-db.sql script to my database](./images/tooling-db.png)
+
+### 11. Create in MySQL a new admin user with username: myuser and password: password:
+
+### Change to the tooling directory
+### Ensure MySQL client is installed (sudo yum install mysql)
+### Connect to the mySQL server from the webserver using the ‘webaccess’ user created earlier and the private IP of the DB server.
+
+`sudo mysql -h 172.31.33.155 -u webaccess -p`
+
+![accessing mysqldb remotely with webaccess privileges](./images/webaccess-logon.png)
+
+### Open the website in your browser http://<Web-Server-Public-IP-Address-or-Public-DNS-Name>/index.php and make sure you can login into the website with myuser user.
+
+![accessing mysqldb remotely with webaccess privileges](./images/login-gui.png)
+
+![successful logon](./images/logon-success.png)
+
+
+### I have just implemented a web solution for a DevOps team using LAMP stack with remote Database and NFS servers.
+
+
